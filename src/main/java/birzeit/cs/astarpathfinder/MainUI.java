@@ -18,20 +18,16 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
 public class MainUI {
     private final Image img = new Image("palestine_map.png");
     private final Map<String, Vertex> cities = Driver.getCities();
-    private final Pane pane = new StackPane();
+    private final AnchorPane pane = new AnchorPane();
     private Stage stage;
 
     public MainUI() throws FileNotFoundException {
-        //convertToXY();
-        //setXY();
-
         // Border pane is the main pane for the UI
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(0, 0, 0, 0));
@@ -44,21 +40,24 @@ public class MainUI {
         label.setPadding(new Insets(20, 0, 0, 0));
         label.setFont(Font.font("Ariel", FontWeight.BOLD, 40));
         label.setStyle("-fx-text-fill: Black");
+
         // HBox for the title
         HBox lblHB = new HBox(500);
         lblHB.getChildren().addAll(new Label(""), label);
         borderPane.setTop(lblHB);
 
         // HBox for the buttons
-        HBox hBox = new HBox(10);
+        HBox hBox = new HBox(30);
         hBox.setAlignment(Pos.CENTER);
         borderPane.setCenter(hBox);
-        hBox.setStyle("-fx-background-color: transparent");
 
         // setting
         ImageView imageView = new ImageView(img);
+        imageView.setFitHeight(771);
+        imageView.setFitWidth(753);
         pane.getChildren().addAll(imageView);
         hBox.getChildren().addAll(pane);
+        pane.setPrefSize(imageView.getFitWidth(), imageView.getFitHeight());
         initializeMap();
 
         // VBox for the two combo boxes ,text areas ,and the button
@@ -78,15 +77,17 @@ public class MainUI {
         // Text areas for the results
         // A* Algorithm
         Label labelAStar = new Label("A* Algorithm");
+        labelAStar.setFont(Font.font("Ariel", FontWeight.BOLD, 14));
         TextArea textAreaAStar = new TextArea();
-        textAreaAStar.setPrefHeight(250);
+        textAreaAStar.setPrefHeight(150);
         textAreaAStar.setPrefWidth(250);
         textAreaAStar.setEditable(false);
 
         // BFS Algorithm
         Label labelBFS = new Label("BFS Algorithm");
+        labelBFS.setFont(Font.font("Ariel", FontWeight.BOLD, 14));
         TextArea textAreaBFS = new TextArea();
-        textAreaBFS.setPrefHeight(250);
+        textAreaBFS.setPrefHeight(150);
         textAreaBFS.setPrefWidth(250);
         textAreaAStar.setEditable(false);
 
@@ -119,7 +120,6 @@ public class MainUI {
                 textAreaBFS.setText(bfs.calculateBFS(source, destination) + "");
                 textAreaBFS.setStyle("-fx-text-fill: Black;");
 
-                // todo: add the path to the map (nodes and roads)
                 // todo: calculate path cost
             }
         });
@@ -179,7 +179,7 @@ public class MainUI {
             Circle point = new Circle(5);
 
             // a label that hold the city name
-            Label cityName = new Label(entry.getKey());
+            Label cityName = new Label(entry.getValue().getCityName());
 
             // set the font size for the city name
             final double MAX_FONT_SIZE = 10.0;
@@ -193,13 +193,15 @@ public class MainUI {
             cityName.setLayoutX(entry.getValue().getXCoordinate() - 10);
             cityName.setLayoutY(entry.getValue().getYCoordinate() - 10);
 
+            System.out.println(cityName.getText() + " " + entry.getValue().getXCoordinate() + " " + entry.getValue().getYCoordinate());
+
             point.setFill(Color.RED);
 
             // setting city circle to the circle above
             entry.getValue().setCircle(point);
 
             // add the circle and the label to the scene
-            pane.getChildren().addAll(entry.getValue().getCircle(), cityName);
+            pane.getChildren().addAll(point, cityName);
 
         }
     }

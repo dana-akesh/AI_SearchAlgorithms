@@ -14,7 +14,7 @@ public class Driver extends Application {
     private static Map<String, Vertex> cities = new HashMap<>();
     private static Graph graph = new Graph();
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         try {
             readVerticesFromFile();
             addEdges();
@@ -61,7 +61,6 @@ public class Driver extends Application {
     private static void addEdges() throws FileNotFoundException {
         File roadsFile = new File("Roads.csv");
         Scanner scanner = new Scanner(roadsFile);
-        int n = 0;
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] parts = line.split(",");
@@ -78,7 +77,6 @@ public class Driver extends Application {
     private static void addAirDistance() throws FileNotFoundException {
         File roadsFile = new File("AirDistance.csv");
         Scanner scanner = new Scanner(roadsFile);
-        int n = 0;
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] parts = line.split(",");
@@ -121,8 +119,8 @@ public class Driver extends Application {
     }
 
     private static void addXY() throws FileNotFoundException {
-        File XYcities = new File("XYCities.csv");
-        Scanner scanner = new Scanner(XYcities);
+        File XYCities = new File("XYCities.csv");
+        Scanner scanner = new Scanner(XYCities);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] parts = line.split(",");
