@@ -31,6 +31,7 @@ public class AStar {
     public void calculateAStar(Vertex start, Vertex target) {
         PriorityQueue<Vertex> openList = new PriorityQueue<>();
         Set<Vertex> closedList = new HashSet<>();
+        double totalWeight = 0;
 
         start.setG(0);
         start.setF(start.getG() + start.calculateHeuristic(target));
@@ -52,7 +53,7 @@ public class AStar {
                     continue;
                 }
 
-                double totalWeight = current.getG() + edge.getDistance();
+               totalWeight = current.getG() + edge.getDistance();
 
                 if (!openList.contains(neighbor) || totalWeight < neighbor.getG()) {
                     neighbor.setParent(current);
@@ -66,6 +67,17 @@ public class AStar {
             }
         }
 
+    }
+    public static double calculateTotalCost(Vertex target) {
+        double totalCost = 0;
+        Vertex vertex = target;
+
+        while (vertex != null) {
+            totalCost += vertex.getG();
+            vertex = vertex.getParent();
+        }
+
+        return totalCost;
     }
 
 }

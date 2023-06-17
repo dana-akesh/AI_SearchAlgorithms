@@ -56,4 +56,19 @@ public class BFS {
         path.add(0, start);
         return path;
     }
+    public double calculateTotalCost(List<Vertex> path) {
+        double totalCost = 0;
+        Vertex previous = null;
+
+        for (Vertex current : path) {
+            if (previous != null) {
+                double distance = graph.getDistance(previous, current);
+                //getDistance(previous, current);
+                totalCost += distance;
+            }
+            previous = current;
+        }
+
+        return totalCost;
+    }
 }

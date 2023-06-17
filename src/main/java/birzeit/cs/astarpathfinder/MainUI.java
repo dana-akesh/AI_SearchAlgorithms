@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -112,12 +113,15 @@ public class MainUI {
                 // A* Algorithm
                 AStar aStar = new AStar();
                 aStar.calculateAStar(source, destination);
-                textAreaAStar.setText(aStar.printPath(destination));
+                double aStarValue = AStar.calculateTotalCost(destination);
+                textAreaAStar.setText(aStar.printPath(destination)+ "\n" + "Total Cost: " + aStarValue);
                 textAreaAStar.setStyle("-fx-text-fill: Black;");
 
                 // BFS Algorithm
                 BFS bfs = new BFS();
-                textAreaBFS.setText(bfs.calculateBFS(source, destination) + "");
+                List<Vertex> path = bfs.calculateBFS(source, destination);
+                double bfsValue = bfs.calculateTotalCost(path);
+                textAreaBFS.setText(bfs.calculateBFS(source, destination) +"\n" + "Total Cost: " + bfsValue);
                 textAreaBFS.setStyle("-fx-text-fill: Black;");
 
                 // todo: calculate path cost
