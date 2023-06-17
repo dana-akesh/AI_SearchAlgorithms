@@ -23,20 +23,20 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class MainUI {
+    private final Image img = new Image("palestine_map.png");
+    private final Map<String, Vertex> cities = Driver.getCities();
+    private final Pane pane = new StackPane();
     private Stage stage;
-    private Image img = new Image("palestine_map.png");
-    private Map<String, Vertex> cities = Driver.getCities();
-    private StackPane pane = new StackPane();
 
     public MainUI() throws FileNotFoundException {
-        toXY();
-        setXY();
+        //convertToXY();
+        //setXY();
 
         // Border pane is the main pane for the UI
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(0, 0, 0, 0));
         borderPane.setStyle("-fx-background-color: #f6fbff");
-        initalizeMap();
+
 
         // Label for the title
         Label label = new Label("Palestine Cities Shortest Path");
@@ -59,6 +59,7 @@ public class MainUI {
         ImageView imageView = new ImageView(img);
         pane.getChildren().addAll(imageView);
         hBox.getChildren().addAll(pane);
+        initializeMap();
 
         // VBox for the two combo boxes ,text areas ,and the button
         VBox vBox = new VBox(10);
@@ -93,8 +94,10 @@ public class MainUI {
         vBox.getChildren().addAll(listView1, listView2, btn, labelAStar, textAreaAStar, labelBFS, textAreaBFS);
         hBox.getChildren().addAll(vBox);
 
+
         // Event handler for the button
         btn.setOnAction(event -> {
+            // Checking if the user selected two cities
             if (listView1.getValue() == null || listView2.getValue() == null) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
@@ -113,7 +116,7 @@ public class MainUI {
 
                 // BFS Algorithm
                 BFS bfs = new BFS();
-                textAreaBFS.setText(bfs.calculateBFS(source, destination)+"");
+                textAreaBFS.setText(bfs.calculateBFS(source, destination) + "");
                 textAreaBFS.setStyle("-fx-text-fill: Black;");
 
                 // todo: add the path to the map (nodes and roads)
@@ -133,7 +136,7 @@ public class MainUI {
         return stage;
     }
 
-    private void toXY() throws FileNotFoundException {
+    private void convertToXY() throws FileNotFoundException {
 
         File file = new File("Cities.csv");
         File XYfile = new File("XYCities.csv");
@@ -146,14 +149,15 @@ public class MainUI {
 
             printWriter.print(str[0] + ',');
 
-            //x = image. width * (longitude + 180) / (2 * 180)
-            printWriter.print(img.getWidth() * (Double.parseDouble(str[2].trim()) + 180) / (2 * 180));
-            //y = image. height * (latitude + 180) / (2 * 180)
-            printWriter.println("," + img.getHeight() * (Double.parseDouble(str[1].trim()) + 180) / (2 * 180));
+            double y = (Double.parseDouble(str[1].trim()) / 585) * (600 + 10);
+            double x = (Double.parseDouble(str[2].trim()) / 585) * (600 + 10);
+
+            printWriter.println(x + "," + y);
         }
         printWriter.close();
     }
 
+    // setting the x and y coordinates for each city
     private void setXY() throws FileNotFoundException {
         File file = new File("XYCities.csv");
         Scanner scanner = new Scanner(file);
@@ -161,20 +165,24 @@ public class MainUI {
             String line = scanner.nextLine();
             String[] str = line.trim().split(",");
 
+            // set the x and y coordinates for each city
             cities.get(str[0]).setXCoordinate(Double.parseDouble(str[1].trim()));
             cities.get(str[0]).setYCoordinate(Double.parseDouble(str[2].trim()));
         }
     }
 
-    public void initalizeMap() {
+    // setting the nodes and roads on the map
+    public void initializeMap() {
+        // setting the nodes on the map
         for (Map.Entry<String, Vertex> entry : cities.entrySet()) {
             // the circle that represents the city on the map
-            Circle point = new Circle(10);
+            Circle point = new Circle(5);
 
             // a label that hold the city name
             Label cityName = new Label(entry.getKey());
 
-            final double MAX_FONT_SIZE = 9.0;
+            // set the font size for the city name
+            final double MAX_FONT_SIZE = 10.0;
             cityName.setFont(new Font(MAX_FONT_SIZE));
 
             // set circle coordinates
@@ -182,13 +190,10 @@ public class MainUI {
             point.setCenterY(entry.getValue().getYCoordinate());
 
             // set label beside the circle
-            cityName.setLayoutX(entry.getValue().getYCoordinate() - 10);
-            cityName.setLayoutY(entry.getValue().getXCoordinate() - 10);
+            cityName.setLayoutX(entry.getValue().getXCoordinate() - 10);
+            cityName.setLayoutY(entry.getValue().getYCoordinate() - 10);
 
             point.setFill(Color.RED);
-            Tooltip tooltip = new Tooltip(entry.getValue().toString());
-            tooltip.setAutoFix(true);
-            Tooltip.install(point, tooltip);
 
             // setting city circle to the circle above
             entry.getValue().setCircle(point);

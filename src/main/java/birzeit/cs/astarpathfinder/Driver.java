@@ -10,29 +10,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static birzeit.cs.astarpathfinder.Main.cities;
-
 public class Driver extends Application {
     private static Map<String, Vertex> cities = new HashMap<>();
     private static Graph graph = new Graph();
 
     public static void main(String[] args) throws FileNotFoundException {
-        try{
+        try {
             readVerticesFromFile();
             addEdges();
             addAirDistance();
+            addXY();
             calculateHeuristicValues(graph, cities.get("hebron"));
             Application.launch();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void start(Stage stage) throws IOException {
-        MainUI mainUI = new MainUI();
-        mainUI.getStage().show();
-
     }
 
     public static Map<String, Vertex> getCities() {
@@ -73,7 +65,7 @@ public class Driver extends Application {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] parts = line.split(",");
-            if(parts.length < 3)
+            if (parts.length < 3)
                 continue;
             String sourceCityName = parts[0];
             String destinationCityName = parts[1];
@@ -118,6 +110,29 @@ public class Driver extends Application {
             } else if (counter > 15) {
                 break;
             }
+        }
+    }
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        MainUI mainUI = new MainUI();
+        mainUI.getStage().show();
+
+    }
+
+    private static void addXY() throws FileNotFoundException {
+        File XYcities = new File("XYCities.csv");
+        Scanner scanner = new Scanner(XYcities);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            String[] parts = line.split(",");
+            if (parts.length < 3)
+                continue;
+            String cityName = parts[0];
+            double x = Double.parseDouble(parts[1]);
+            double y = Double.parseDouble(parts[2]);
+            cities.get(cityName).setXCoordinate(x);
+            cities.get(cityName).setYCoordinate(y);
         }
     }
 }
