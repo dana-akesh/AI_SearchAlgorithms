@@ -19,7 +19,6 @@ public class Driver extends Application {
             readVerticesFromFile();
             addEdges();
             addAirDistance();
-            addXY();
             calculateHeuristicValues(graph, cities.get("hebron"));
             Application.launch();
         } catch (Exception e) {

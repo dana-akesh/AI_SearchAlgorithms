@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class MainUI {
-    private final Image img = new Image("palestine_map.png");
+    private static final Image img = new Image("palestine_map.png");
     private final Map<String, Vertex> cities = Driver.getCities();
     private final AnchorPane pane = new AnchorPane();
     private Stage stage;
@@ -185,6 +185,8 @@ public class MainUI {
             final double MAX_FONT_SIZE = 10.0;
             cityName.setFont(new Font(MAX_FONT_SIZE));
 
+            entry.getValue().convertCoordinatesToPixel();
+
             // set circle coordinates
             point.setCenterX(entry.getValue().getXCoordinate());
             point.setCenterY(entry.getValue().getYCoordinate());
@@ -206,5 +208,7 @@ public class MainUI {
         }
     }
 
-
+    public static Image getImg() {
+        return img;
+    }
 }
