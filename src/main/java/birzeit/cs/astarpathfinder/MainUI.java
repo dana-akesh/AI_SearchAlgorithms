@@ -32,58 +32,68 @@ public class MainUI {
         toXY();
         setXY();
 
+        // Border pane is the main pane for the UI
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(0, 0, 0, 0));
         borderPane.setStyle("-fx-background-color: #f6fbff");
-        initalizeMap(borderPane);
+        initalizeMap();
 
+        // Label for the title
         Label label = new Label("Palestine Cities Shortest Path");
         label.setAlignment(Pos.CENTER);
         label.setPadding(new Insets(20, 0, 0, 0));
         label.setFont(Font.font("Ariel", FontWeight.BOLD, 40));
-        label.setStyle("-fx-text-fill: #60425b");
+        label.setStyle("-fx-text-fill: Black");
+        // HBox for the title
         HBox lblHB = new HBox(500);
         lblHB.getChildren().addAll(new Label(""), label);
         borderPane.setTop(lblHB);
 
+        // HBox for the buttons
         HBox hBox = new HBox(10);
         hBox.setAlignment(Pos.CENTER);
         borderPane.setCenter(hBox);
         hBox.setStyle("-fx-background-color: transparent");
 
+        // setting
         ImageView imageView = new ImageView(img);
         pane.getChildren().addAll(imageView);
         hBox.getChildren().addAll(pane);
 
+        // VBox for the two combo boxes ,text areas ,and the button
         VBox vBox = new VBox(10);
         vBox.setAlignment(Pos.CENTER);
 
-        ComboBox<Vertex> listView1 = new ComboBox<>();
+        // Combo boxes for the cities
         ObservableList<Vertex> items = FXCollections.observableArrayList(cities.values());
+        ComboBox<Vertex> listView1 = new ComboBox<>();
         listView1.setItems(items);
-
         ComboBox<Vertex> listView2 = new ComboBox<>();
         listView2.setItems(items);
 
+        // Button for finding the shortest path
         Button btn = new Button("Find Shortest Path");
 
+        // Text areas for the results
+        // A* Algorithm
         Label labelAStar = new Label("A* Algorithm");
-        Label textAreaAStar = new Label();
+        TextArea textAreaAStar = new TextArea();
         textAreaAStar.setPrefHeight(250);
         textAreaAStar.setPrefWidth(250);
-        textAreaAStar.setDisable(true);
+        textAreaAStar.setEditable(false);
 
+        // BFS Algorithm
         Label labelBFS = new Label("BFS Algorithm");
-        Label textAreaBFS = new Label();
+        TextArea textAreaBFS = new TextArea();
         textAreaBFS.setPrefHeight(250);
         textAreaBFS.setPrefWidth(250);
-        textAreaBFS.setDisable(true);
+        textAreaAStar.setEditable(false);
 
-
+        // Adding the nodes and roads to the map
         vBox.getChildren().addAll(listView1, listView2, btn, labelAStar, textAreaAStar, labelBFS, textAreaBFS);
-
         hBox.getChildren().addAll(vBox);
 
+        // Event handler for the button
         btn.setOnAction(event -> {
             if (listView1.getValue() == null || listView2.getValue() == null) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -105,9 +115,13 @@ public class MainUI {
                 BFS bfs = new BFS();
                 textAreaBFS.setText(bfs.calculateBFS(source, destination)+"");
                 textAreaBFS.setStyle("-fx-text-fill: Black;");
+
+                // todo: add the path to the map (nodes and roads)
+                // todo: calculate path cost
             }
         });
 
+        // Creating the scene and setting the stage
         Scene scene = new Scene(borderPane);
         stage = new Stage();
         stage.setScene(scene);
@@ -152,7 +166,7 @@ public class MainUI {
         }
     }
 
-    public void initalizeMap(BorderPane borderPane) {
+    public void initalizeMap() {
         for (Map.Entry<String, Vertex> entry : cities.entrySet()) {
             // the circle that represents the city on the map
             Circle point = new Circle(10);
