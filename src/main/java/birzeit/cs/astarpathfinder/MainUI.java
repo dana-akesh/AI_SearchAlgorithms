@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -31,7 +33,7 @@ public class MainUI {
     public MainUI() throws FileNotFoundException {
         // Border pane is the main pane for the UI
         BorderPane borderPane = new BorderPane();
-        borderPane.setPadding(new Insets(0, 0, 0, 0));
+        borderPane.setPadding(new Insets(0, 0, 10, 0));
         borderPane.setStyle("-fx-background-color: #f6fbff");
 
 
@@ -73,7 +75,11 @@ public class MainUI {
         listView2.setItems(items);
 
         // Button for finding the shortest path
-        Button btn = new Button("Find Shortest Path");
+        Button FindPathBtn = new Button("Find Shortest Path");
+
+        // Button for clearing the map
+        Button clearBtn = new Button("Clear Map");
+        clearBtn.setDisable(true);
 
         // Text areas for the results
         // A* Algorithm
@@ -93,12 +99,12 @@ public class MainUI {
         textAreaAStar.setEditable(false);
 
         // Adding the nodes and roads to the map
-        vBox.getChildren().addAll(listView1, listView2, btn, labelAStar, textAreaAStar, labelBFS, textAreaBFS);
+        vBox.getChildren().addAll(listView1, listView2, FindPathBtn, labelAStar, textAreaAStar, labelBFS, textAreaBFS, clearBtn);
         hBox.getChildren().addAll(vBox);
 
 
         // Event handler for the button
-        btn.setOnAction(event -> {
+        FindPathBtn.setOnAction(event -> {
             // Checking if the user selected two cities
             if (listView1.getValue() == null || listView2.getValue() == null) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -107,6 +113,12 @@ public class MainUI {
                 alert.setContentText("Please select two cities");
                 alert.showAndWait();
             } else {
+                // clearing the map
+                pane.getChildren().clear();
+                pane.getChildren().addAll(imageView);
+                initializeMap();
+
+                // getting the source and destination cities
                 Vertex source = listView1.getValue();
                 Vertex destination = listView2.getValue();
 
@@ -114,18 +126,31 @@ public class MainUI {
                 AStar aStar = new AStar();
                 aStar.calculateAStar(source, destination);
                 double aStarValue = AStar.calculateTotalCost(destination);
-                textAreaAStar.setText(aStar.printPath(destination)+ "\n" + "Total Cost: " + aStarValue);
+                textAreaAStar.setText(aStar.printPath(destination) + "\n" + "Total Cost: " + aStarValue);
                 textAreaAStar.setStyle("-fx-text-fill: Black;");
+
 
                 // BFS Algorithm
                 BFS bfs = new BFS();
                 List<Vertex> path = bfs.calculateBFS(source, destination);
                 double bfsValue = bfs.calculateTotalCost(path);
-                textAreaBFS.setText(bfs.calculateBFS(source, destination) +"\n" + "Total Cost: " + bfsValue);
+                textAreaBFS.setText(bfs.calculateBFS(source, destination) + "\n" + "Total Cost: " + bfsValue);
                 textAreaBFS.setStyle("-fx-text-fill: Black;");
 
-                // todo: calculate path cost
+                // drawing the paths
+                drawPath(aStar.getvVrticesUI(), path);
+                FindPathBtn.setDisable(true);
+                clearBtn.setDisable(false);
             }
+        });
+
+        clearBtn.setOnAction(event -> {
+            // clearing the map
+            pane.getChildren().clear();
+            pane.getChildren().addAll(imageView);
+            initializeMap();
+            FindPathBtn.setDisable(false);
+            clearBtn.setDisable(true);
         });
 
         // Creating the scene and setting the stage
@@ -136,43 +161,12 @@ public class MainUI {
         stage.setTitle("Path Finder");
     }
 
+    public static Image getImg() {
+        return img;
+    }
+
     public Stage getStage() {
         return stage;
-    }
-
-    private void convertToXY() throws FileNotFoundException {
-
-        File file = new File("Cities.csv");
-        File XYfile = new File("XYCities.csv");
-
-        PrintWriter printWriter = new PrintWriter(XYfile);
-        Scanner scanner = new Scanner(file);
-        while (file.exists() && scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            String[] str = line.trim().split(",");
-
-            printWriter.print(str[0] + ',');
-
-            double y = (Double.parseDouble(str[1].trim()) / 585) * (600 + 10);
-            double x = (Double.parseDouble(str[2].trim()) / 585) * (600 + 10);
-
-            printWriter.println(x + "," + y);
-        }
-        printWriter.close();
-    }
-
-    // setting the x and y coordinates for each city
-    private void setXY() throws FileNotFoundException {
-        File file = new File("XYCities.csv");
-        Scanner scanner = new Scanner(file);
-        while (file.exists() && scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            String[] str = line.trim().split(",");
-
-            // set the x and y coordinates for each city
-            cities.get(str[0]).setXCoordinate(Double.parseDouble(str[1].trim()));
-            cities.get(str[0]).setYCoordinate(Double.parseDouble(str[2].trim()));
-        }
     }
 
     // setting the nodes and roads on the map
@@ -180,14 +174,15 @@ public class MainUI {
         // setting the nodes on the map
         for (Map.Entry<String, Vertex> entry : cities.entrySet()) {
             // the circle that represents the city on the map
-            Circle point = new Circle(5);
+            Circle point = new Circle(10);
 
             // a label that hold the city name
             Label cityName = new Label(entry.getValue().getCityName());
 
             // set the font size for the city name
-            final double MAX_FONT_SIZE = 10.0;
+            final double MAX_FONT_SIZE = 12.0;
             cityName.setFont(new Font(MAX_FONT_SIZE));
+            cityName.setStyle("-fx-font-weight: bold;");
 
             entry.getValue().convertCoordinatesToPixel();
 
@@ -199,8 +194,7 @@ public class MainUI {
             cityName.setLayoutX(entry.getValue().getXCoordinate() - 10);
             cityName.setLayoutY(entry.getValue().getYCoordinate() - 10);
 
-            System.out.println(cityName.getText() + " " + entry.getValue().getXCoordinate() + " " + entry.getValue().getYCoordinate());
-
+            // set circle color
             point.setFill(Color.RED);
 
             // setting city circle to the circle above
@@ -212,7 +206,28 @@ public class MainUI {
         }
     }
 
-    public static Image getImg() {
-        return img;
+    // setting the roads on the map
+    private void drawPath(ArrayList<Vertex> aStarPaths, List<Vertex> bfsPaths) {
+        // drawing the paths
+
+        while (aStarPaths.size() > 1) {
+            Vertex v1 = aStarPaths.get(0);
+            Vertex v2 = aStarPaths.get(1);
+            Line line = new Line(v1.getXCoordinate(), v1.getYCoordinate(), v2.getXCoordinate(), v2.getYCoordinate());
+            line.setStroke(Color.BLUE);
+            line.setStrokeWidth(3);
+            pane.getChildren().add(line);
+            aStarPaths.remove(0);
+        }
+
+        while (bfsPaths.size() > 1) {
+            Vertex v1 = bfsPaths.get(0);
+            Vertex v2 = bfsPaths.get(1);
+            Line line = new Line(v1.getXCoordinate() + 5, v1.getYCoordinate() + 5, v2.getXCoordinate() + 5, v2.getYCoordinate() + 5);
+            line.setStroke(Color.GREEN);
+            line.setStrokeWidth(3);
+            pane.getChildren().add(line);
+            bfsPaths.remove(0);
+        }
     }
 }

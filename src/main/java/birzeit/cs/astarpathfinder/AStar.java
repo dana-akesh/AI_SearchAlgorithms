@@ -4,9 +4,14 @@ import java.util.*;
 
 public class AStar {
     private Graph graph;
+    private ArrayList<Vertex> verticesUI = new ArrayList<>(); // UI
 
     public AStar() {
         this.graph = Driver.getGraph();
+    }
+
+    public ArrayList<Vertex> getvVrticesUI() {
+        return verticesUI;
     }
 
     public String printPath(Vertex target) {
@@ -15,6 +20,7 @@ public class AStar {
 
         while (vertex != null) {
             cityNames.add(vertex.getCityName());
+            verticesUI.add(vertex);
             vertex = vertex.getParent();
         }
 
