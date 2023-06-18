@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Driver extends Application {
-    private static Map<String, Vertex> cities = new HashMap<>();
+     static Map<String, Vertex> cities = new HashMap<>();
+     final static Map<String , Map<String, Double>> hValues = new HashMap<>();
     private static Graph graph = new Graph();
 
     public static void main(String[] args) {
@@ -85,6 +86,9 @@ public class Driver extends Application {
             String destinationCityName = parts[1];
             double airDistance = Double.parseDouble(parts[2]);
             graph.addAirEdge(cities.get(sourceCityName), cities.get(destinationCityName), airDistance);
+            Map<String, Double> innerMap = new HashMap<>();
+            innerMap.put(destinationCityName,airDistance);
+            hValues.put(sourceCityName, innerMap);
         }
     }
 
