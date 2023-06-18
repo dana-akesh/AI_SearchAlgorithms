@@ -4,11 +4,17 @@ import java.util.*;
 
 public class BFS {
     private Graph graph;
+    private ArrayList<Vertex> verticesUI = new ArrayList<>(); // UI
 
     public BFS() {
         this.graph = Driver.getGraph();
     }
 
+    public ArrayList<Vertex> getVerticesUI() {
+        return verticesUI;
+    }
+
+    // Calculate the path from start to goal
     public List<Vertex> calculateBFS( Vertex start, Vertex goal) {
         // Initialize a queue for BFS
         Queue<Vertex> queue = new LinkedList<>();
@@ -46,7 +52,8 @@ public class BFS {
         return Collections.emptyList();
     }
 
-    private static List<Vertex> reconstructPath(Map<Vertex, Vertex> parentMap, Vertex start, Vertex goal) {
+    // Reconstruct the path from start to goal
+    private List<Vertex> reconstructPath(Map<Vertex, Vertex> parentMap, Vertex start, Vertex goal) {
         List<Vertex> path = new ArrayList<>();
         Vertex current = goal;
         while (current != start) {
@@ -56,6 +63,8 @@ public class BFS {
         path.add(0, start);
         return path;
     }
+
+    // Calculate the total cost of the path
     public double calculateTotalCost(List<Vertex> path) {
         double totalCost = 0;
         Vertex previous = null;

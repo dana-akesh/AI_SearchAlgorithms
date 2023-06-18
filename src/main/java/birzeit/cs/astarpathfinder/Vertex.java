@@ -126,7 +126,7 @@ class Vertex implements Comparable<Vertex> {
     public void convertCoordinatesToPixel() {
         // bottom left: 31.360655, 34.341174
         // top right: 33.10797, 35.66922
-        this.xCoordinate = (longitude - 34.341174) / (35.66922 - 33.5) * MainUI.getImg().getWidth() + 80;
+        this.xCoordinate = (longitude - 34.341174) / (35.66922 - 34.341174) * MainUI.getImg().getWidth() + 120;
         this.yCoordinate = MainUI.getImg().getHeight() - (latitude - 31.360655) / (33.10797 - 31.360655) * MainUI.getImg().getHeight() - 20;
     }
 
