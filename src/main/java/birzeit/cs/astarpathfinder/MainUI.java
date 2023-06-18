@@ -85,6 +85,7 @@ public class MainUI {
         // A* Algorithm
         Label labelAStar = new Label("A* Algorithm");
         labelAStar.setFont(Font.font("Ariel", FontWeight.BOLD, 14));
+        labelAStar.setStyle("-fx-text-fill: BLUE; -fx-font-weight: bold;");
         TextArea textAreaAStar = new TextArea();
         textAreaAStar.setPrefHeight(150);
         textAreaAStar.setPrefWidth(250);
@@ -93,6 +94,7 @@ public class MainUI {
         // BFS Algorithm
         Label labelBFS = new Label("BFS Algorithm");
         labelBFS.setFont(Font.font("Ariel", FontWeight.BOLD, 14));
+        labelBFS.setStyle("-fx-text-fill: GREEN;-fx-font-weight: bold;");
         TextArea textAreaBFS = new TextArea();
         textAreaBFS.setPrefHeight(150);
         textAreaBFS.setPrefWidth(250);
@@ -148,6 +150,8 @@ public class MainUI {
             // clearing the map
             pane.getChildren().clear();
             pane.getChildren().addAll(imageView);
+            textAreaBFS.clear();
+            textAreaAStar.clear();
             initializeMap();
             FindPathBtn.setDisable(false);
             clearBtn.setDisable(true);
