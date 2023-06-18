@@ -61,29 +61,20 @@ public class AStar {
 
                totalWeight = current.getG() + edge.getDistance();
 
-                if (!openList.contains(neighbor) || totalWeight < neighbor.getG()) {
+                if (!openList.contains(neighbor)) {
                     neighbor.setParent(current);
                     neighbor.setG(totalWeight);
                     neighbor.setF(neighbor.getG() + neighbor.calculateHeuristic(target));
 
-                    if (!openList.contains(neighbor)) {
                         openList.add(neighbor);
-                    }
+
                 }
             }
         }
 
     }
     public static double calculateTotalCost(Vertex target) {
-        double totalCost = 0;
-        Vertex vertex = target;
-
-        while (vertex != null) {
-            totalCost += vertex.getG();
-            vertex = vertex.getParent();
-        }
-
-        return totalCost;
+        return target.getG();
     }
 
 }
